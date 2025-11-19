@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y \
 # Включение mod_rewrite для Apache
 RUN a2enmod rewrite
 
+# Настройка Apache для работы с .htaccess
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+
 # Установка рабочей директории
 WORKDIR /var/www/html
 

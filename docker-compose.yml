@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - /var/www/html/vendor
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    # Для автоматической перезагрузки PHP файлов (изменения применяются мгновенно)
+    networks:
+      - php_network
+    restart: unless-stopped
+
+  # Опционально: MySQL база данных
+  mysql:
+    image: mysql:8.0
+    container_name: php_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: phpdb
+      MYSQL_USER: phpuser
+      MYSQL_PASSWORD: phppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - php_network
+    restart: unless-stopped
+
+  # Опционально: phpMyAdmin для управления БД
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: php_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - php_network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  php_network:
+    driver: bridge
+

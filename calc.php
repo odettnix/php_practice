@@ -1,66 +1,76 @@
-<!DOCTYPE html>
-<html>
+<?php
+// Инициализация переменных
+$num1 = '';
+$num2 = '';
+$operator = '';
+$result = '';
 
-<head>
-  <title>Калькулятор</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="style.css" />
-</head>
+// Прием и обработка данных из формы методом POST
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Получение и фильтрация данных
+    $num1 = isset($_POST['num1']) ? (int) $_POST['num1'] : 0;
+    $num2 = isset($_POST['num2']) ? (int) $_POST['num2'] : 0;
+    $operator = isset($_POST['operator']) ? trim(strip_tags($_POST['operator'])) : '';
+    
+    // Проверка, что все данные пришли со значениями
+    if ($operator !== '') {
+        // Использование switch для математических операций
+        switch ($operator) {
+            case '+':
+                $result = "Результат: {$num1} + {$num2} = " . ($num1 + $num2);
+                break;
+            case '-':
+                $result = "Результат: {$num1} - {$num2} = " . ($num1 - $num2);
+                break;
+            case '*':
+                $result = "Результат: {$num1} * {$num2} = " . ($num1 * $num2);
+                break;
+            case '/':
+                // Проверка деления на ноль
+                if ($num2 == 0) {
+                    $result = "Ошибка: деление на ноль невозможно!";
+                } else {
+                    $result = "Результат: {$num1} / {$num2} = " . ($num1 / $num2);
+                }
+                break;
+            default:
+                // Обработка неверного оператора
+                $result = "Ошибка: неверный оператор. Используйте: +, -, *, /";
+                break;
+        }
+    } else {
+        $result = "Ошибка: не указан оператор";
+    }
+    
+    // Сохранение значений для отображения в форме
+    $num1_display = htmlspecialchars($_POST['num1'] ?? '');
+    $num2_display = htmlspecialchars($_POST['num2'] ?? '');
+    $operator_display = htmlspecialchars($_POST['operator'] ?? '');
+} else {
+    $num1_display = '';
+    $num2_display = '';
+    $operator_display = '';
+}
+?>
 
-<body>
+<!-- Вывод результата перед формой -->
+<?php if ($result !== ''): ?>
+    <p><strong><?php echo $result; ?></strong></p>
+<?php endif; ?>
 
-  <div id="header">
-    <!-- Верхняя часть страницы -->
-    <img src="logo.gif" width="187" height="29" alt="Наш логотип" class="logo" />
-    <span class="slogan">приходите к нам учиться</span>
-    <!-- Верхняя часть страницы -->
-  </div>
-
-  <div id="content">
-    <!-- Заголовок -->
-    <h1>Калькулятор школьника</h1>
-    <!-- Заголовок -->
-    <!-- Область основного контента -->
-    <form action=''>
-      <label>Число 1:</label>
-      <br />
-      <input name='num1' type='text' />
-      <br />
-      <label>Оператор: </label>
-      <br />
-      <input name='operator' type='text' />
-      <br />
-      <label>Число 2: </label>
-      <br />
-      <input name='num2' type='text' />
-      <br />
-      <br />
-      <input type='submit' value='Считать'>
-    </form>
-    <!-- Область основного контента -->
-  </div>
-  <div id="nav">
-    <h2>Навигация по сайту</h2>
-    <!-- Меню -->
-    <ul>
-      <li><a href='index.php'>Домой</a>
-      </li>
-      <li><a href='about.php'>О нас</a>
-      </li>
-      <li><a href='contact.php'>Контакты</a>
-      </li>
-      <li><a href='table.php'>Таблица умножения</a>
-      </li>
-      <li><a href='calc.php'>Калькулятор</a>
-      </li>
-    </ul>
-    <!-- Меню -->
-  </div>
-  <div id="footer">
-    <!-- Нижняя часть страницы -->
-    &copy; Супер Мега Веб-мастер, 2000 &ndash; 2015
-    <!-- Нижняя часть страницы -->
-  </div>
-</body>
-
-</html>
+<form action='<?= $_SERVER['REQUEST_URI'] ?>' method='POST'>
+  <label>Число 1:</label>
+  <br />
+  <input name='num1' type='text' value="<?= $num1_display ?>" />
+  <br />
+  <label>Оператор: </label>
+  <br />
+  <input name='operator' type='text' value="<?= $operator_display ?>" />
+  <br />
+  <label>Число 2: </label>
+  <br />
+  <input name='num2' type='text' value="<?= $num2_display ?>" />
+  <br />
+  <br />
+  <input type='submit' value='Считать'>
+</form>

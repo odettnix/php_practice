@@ -1,12 +1,10 @@
 <?php
-// Создаём переменную $var со строковым значением HELLO
-$var = "HELLO";
+    $var = "HELLO";
 
-// Используем цикл while для вывода каждой буквы в столбик
-$i = 0;
-while ($i < strlen($var)) {
-    echo $var[$i] . "<br />";
-    $i++;
-}
+    $i = 0;
+    while ($i < strlen($var)) {
+        echo $var[$i] . "<br />";
+        $i++;
+    }
 ?>
 
